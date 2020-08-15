@@ -12,61 +12,60 @@ using Microsoft.Extensions.DependencyInjection;
 namespace API
 {
     public class Startup
+  {
+    private readonly IConfiguration _config;
+
+    public Startup(IConfiguration config)
     {
-        private readonly IConfiguration _config;
-
-        public Startup(IConfiguration config)
-        {
-            _config = config;
-        }
-
-
-        // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
-        {
-            
-            services.AddAutoMapper(typeof(MappingProfiles));
-            services.AddControllers();
-            services.AddDbContext<StoreContext>(x => x.UseSqlite(_config.GetConnectionString("DefaultConnection")));
-
-            services.AddApplicationServices();
-            services.AddSwaggerDocumentation();
-            services.AddCors(opt =>
-            {
-                opt.AddPolicy("CorsPolicy", policy =>
-                {
-                    policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("https://localhost:44370");
-                });
-            });
-        }
-
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
-        {
-            //if (env.IsDevelopment())
-            //{
-            //    app.UseDeveloperExceptionPage();
-            //}
-            app.UseMiddleware<ExceptionMiddleware>();
-
-            app.UseStatusCodePagesWithReExecute("/errors/{0}");
-
-            app.UseHttpsRedirection();
-
-            app.UseRouting();
-
-            app.UseStaticFiles();
-
-            app.UseCors("CorsPolicy");
-
-            app.UseAuthorization();
-
-            app.UseSwaggerDocumentation();
-
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllers();
-            });
-        }
+      _config = config;
     }
+
+
+    // This method gets called by the runtime. Use this method to add services to the container.
+    public void ConfigureServices(IServiceCollection services)
+    {
+      services.AddAutoMapper(typeof(MappingProfiles));
+      services.AddControllers();
+      services.AddDbContext<StoreContext>(x => x.UseSqlite(_config.GetConnectionString("DefaultConnection")));
+
+      services.AddApplicationServices(); // REMEMBER: Extensions/ApplicationServicesExtensions.cs contains more Service configs!!!
+      services.AddSwaggerDocumentation(); // REMEMBER: Extensions/SwaggerServiceExtensions.cs
+      services.AddCors(opt =>
+      {
+        opt.AddPolicy("CorsPolicy", policy =>
+        {
+            policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("https://localhost:4200");
+        });
+      });
+    }
+
+    // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+    public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+    {
+      //if (env.IsDevelopment())
+      //{
+      //    app.UseDeveloperExceptionPage();
+      //}
+      app.UseMiddleware<ExceptionMiddleware>();
+
+      app.UseStatusCodePagesWithReExecute("/errors/{0}");
+
+      app.UseHttpsRedirection();
+
+      app.UseRouting();
+
+      app.UseStaticFiles();
+
+      app.UseCors("CorsPolicy");
+
+      app.UseAuthorization();
+
+      app.UseSwaggerDocumentation();  //REMEMBER: Extensions/SwaggerServiceExtensions.cs
+
+      app.UseEndpoints(endpoints =>
+      {
+        endpoints.MapControllers();
+      });
+    }
+  }
 }

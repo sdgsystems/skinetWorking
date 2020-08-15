@@ -10,7 +10,7 @@ namespace Core.Specifications
 
         public int PageIndex { get; set; } = 1;
 
-        private int _pageSize = 6;
+        private int _pageSize = 6; // backing field for PageSize
 
         public int PageSize
         {
@@ -24,7 +24,7 @@ namespace Core.Specifications
 
         public string Sort { get; set; }
 
-        private string _search;
+        private string _search; // backing field for Search
 
         public string Search
         {
